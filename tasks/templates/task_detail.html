@@ -1,0 +1,166 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Box Icons CSS -->
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="{% static 'style.css' %}" />
+    <title>Quick ToDo</title>
+  </head>
+  <body
+    class="bg-[#cfcfcf] flex flex-col items-center justify-center gap-4 h-screen"
+  >
+    <!-- header -->
+    <header
+      class="bg-white shadow-lg w-10/12 h-auto rounded-3xl flex flex-col sm:flex-row justify-between items-center p-5 m-7 md:w-3/6"
+    >
+    <a href="{% url 'home' %}">
+      <h1 class="text-blue-600 font-bold text-[40px]">Quick ToDo</h1>
+    </a>
+      <a
+        class="bg-blue-600 py-2 px-4 text-white font-semibold rounded-2xl text-lg mt-4 flex items-center gap-2"
+        href="{{ request.META.HTTP_REFERER }}"
+      >
+        <i class="bx bxs-left-arrow-circle bx-sm"></i> Trở lại
+      </a>
+    </header>
+
+    <!-- Tasks -->
+    <section
+      class="flex flex-1 flex-wrap justify-center gap-3 bg-[#fff0] w-10/12 md:w-11/12 h-full mb-3 rounded-2xl p-3 overflow-y-auto "
+    >
+      <!-- Task card -->
+      <div class="w-full md:w-4/6 flex flex-col bg-white h-fit rounded-xl p-3">
+        <!-- Top -->
+        <div class="flex flex-row justify-between">
+          <!-- Left: Title and Description -->
+          <div>
+            <h1 class="text-green-500 font-semibold text-xl">
+              {{task.title}}
+            </h1>
+            <br />
+            <h2 class="text-blue-500 font-bold">
+              Trạng thái:
+              {% if task.completed %}
+              <span class="font-medium text-green-400"
+                >Đã hoàn thành <i class="bx bxs-badge-check"></i
+              ></span>
+              {% else %}
+              <span class="font-medium text-red-400"
+                > Chưa hoàn thành <i class="bx bxs-sad"></i></span>
+              {% endif %}
+            </h2>
+            <h2 class="text-gray-500 font-bold italic underline mt-3">
+              Mô tả
+            </h2>
+            <p class="text-gray-500 text-md">
+              {{task.description}}
+            </p>
+          </div>
+          <!-- Right: Toggle complete mode -->
+          <a href="{% url 'toggle_complete' task.id %}">
+            <i class="bx bx-check-circle bx-sm text-blue-500"></i>
+            <!-- <i class='bx bxs-check-circle'></i> -->
+          </a>
+        </div>
+        <!-- Line -->
+        <hr class="border-t border-gray-200 my-2" />
+        <!-- Bottom: Time and Date | Delete -->
+        <div class="flex flex-row justify-between">
+          <h2 class="text-gray-500 font-bold">
+            Thời hạn {{task.due_date}} <span class="font-medium text-gray-400">{{task.due_time}}</span>
+          </h2>
+          <a href="{% url 'delete_task' task.id %} ">
+            <i class="bx bxs-trash bx-sm text-red-500"></i>
+          </a>
+        </div>
+      </div>
+    
+          <!-- Task Form -->
+    <form method="POST" class="w-10/12 md:w-3/6 shadow-md bg-white rounded-2xl p-4 mb-3">
+      <h1 class="text-gray-500 font-bold text-[20px] mb-3 text-center">Cập nhật công việc</h1>
+      {% csrf_token %}
+      <div class="mb-4">
+        <label
+          class="block text-gray-700 text-sm font-bold mb-2"
+          for="task-name"
+          >Công việc: </label
+        >
+        <input
+          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          id="task-name"
+          name="title"
+          type="text"
+          value="{{task.title}}"
+          placeholder="Enter task name"
+          required
+        />
+      </div>
+      <div class="mb-4">
+        <label
+          class="block text-gray-700 text-sm font-bold mb-2"
+          for="task-description"
+          >Mô tả công việc: </label
+        >
+        <textarea
+          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          id="task-description"
+          name="description"
+          placeholder="Enter task description"
+        >{{task.description}}</textarea>
+      </div>
+      <div class="mb-4 flex">
+        <div class="mr-2">
+          <label
+            class="block text-gray-700 text-sm font-bold mb-2"
+            for="due-date"
+            >Ngày hoàn thành: </label
+          >
+          
+          <input
+            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            id="due-date"
+            type="date"
+            name="due_date"
+            value="{{task.due_date | date:'Y-m-d'}}"
+            required
+          />
+        </div>
+        <div>
+          <label
+            class="block text-gray-700 text-sm font-bold mb-2"
+            for="due-time"
+            >Vào lúc: </label
+          >
+          <input
+            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            id="due-time"
+            name="due_time"
+            type="time"
+            value="{{task.due_time | time:'h:i:s' }}"
+            required
+          />
+        </div>
+      </div>
+      <div class="flex items-center justify-center">
+        <button
+          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          type="submit"
+        >
+          Cập nhật công việc
+        </button>
+      </div>
+    </form>
+
+    </section>
+
+    <!-- Box Icons -->
+    <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+  </body>
+</html>
