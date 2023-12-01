@@ -1,36 +1,6 @@
-{% load static %}
+{% include 'base.html' %}
 
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- Box Icons CSS -->
-    <link
-      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="{% static 'style.css' %}" />
-    <title>Quick ToDo</title>
-  </head>
-  <body
-    class="bg-[#cfcfcf] flex flex-col items-center justify-center gap-4 h-screen"
-  >
-    <!-- header -->
-    <header
-      class="bg-white shadow-lg w-10/12 h-auto rounded-3xl flex flex-col sm:flex-row justify-between items-center p-5 m-7 md:w-3/6"
-    >
-    <a href="{% url 'home' %}">
-      <h1 class="text-blue-600 font-bold text-[40px]">Quick ToDo</h1>
-    </a>
-      <a
-        class="bg-blue-600 py-2 px-4 text-white font-semibold rounded-2xl text-lg mt-4 flex items-center gap-2"
-        href="{{ request.META.HTTP_REFERER }}"
-      >
-        <i class="bx bxs-left-arrow-circle bx-sm"></i> Trở lại
-      </a>
-    </header>
-
+{% block content %}
     <!-- Tasks -->
     <section
       class="flex flex-1 flex-wrap justify-center gap-3 bg-[#fff0] w-10/12 md:w-11/12 h-full mb-3 rounded-2xl p-3 overflow-y-auto "
@@ -44,7 +14,11 @@
             <h1 class="text-green-500 font-semibold text-xl">
               {{task.title}}
             </h1>
-            <br />
+            <br>
+            {% if task.task_image %}
+              <img src="{{task.task_image.url}}" width=400px style="border-radius:10px">     
+            {% endif %}
+            <br>
             <h2 class="text-blue-500 font-bold">
               Trạng thái:
               {% if task.completed %}
@@ -83,7 +57,7 @@
       </div>
     
           <!-- Task Form -->
-    <form method="POST" class="w-10/12 md:w-3/6 shadow-md bg-white rounded-2xl p-4 mb-3">
+    <form method="POST" class="w-10/12 md:w-3/6 shadow-md bg-white rounded-2xl p-4 mb-3" enctype="multipart/form-data">
       <h1 class="text-gray-500 font-bold text-[20px] mb-3 text-center">Cập nhật công việc</h1>
       {% csrf_token %}
       <div class="mb-4">
@@ -100,6 +74,19 @@
           value="{{task.title}}"
           placeholder="Enter task name"
           required
+        />
+      </div>
+      <div class="mb-4">
+        <label
+          class="block text-gray-700 text-sm font-bold mb-2"
+          for="task-image"
+          >Hình ảnh công việc: </label
+        >
+        <input
+          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          id="task-image"
+          name="task_image"
+          type="file"
         />
       </div>
       <div class="mb-4">
@@ -160,7 +147,4 @@
 
     </section>
 
-    <!-- Box Icons -->
-    <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
-  </body>
-</html>
+{% endblock %}

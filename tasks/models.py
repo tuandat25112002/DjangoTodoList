@@ -7,7 +7,8 @@ class Task(models.Model):
     due_date = models.DateField()
     due_time = models.TimeField()
     completed = models.BooleanField(default=False)
-
+    task_image = models.ImageField(null=True, blank=True, upload_to = "images/")    
+    
     def __str__(self) -> str:
         return f'{self.title}'
     

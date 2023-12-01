@@ -1,5 +1,4 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponseRedirect
 from .models import Task
 # Create your views here.
 def home(request):
@@ -30,7 +29,8 @@ def add_task(request):
                 description = description,
                 due_date = due_date,
                 due_time = due_time,
-                completed = completed
+                completed = completed,
+                task_image = request.FILES['task_image']
             )
             task.save()
             return redirect('home')
@@ -53,6 +53,9 @@ def task_detail(request, task_id):
             task.description = description
             task.due_date = due_date
             task.due_time = due_time
+            if (request.FILES['task_image']):
+                task.task_image.delete()
+                task.task_image = request.FILES['task_image']
             task.save()
             return render(request, 'task_detail.html', {
                 'task' : task
@@ -69,6 +72,8 @@ def toggle_complete(request, task_id):
 def remove_task(request, task_id):
     task = Task.objects.get(id=task_id)
     if task:
+        if task.task_image:
+            task.task_image.delete()
         task.delete()
         return redirect('home')
 

@@ -8,7 +8,7 @@ class="flex flex-1 flex-wrap justify-center gap-3 bg-[#fff0] w-10/12 md:w-11/12 
 <!-- Task card -->
 {% for task in tasks %}
   <!-- Task card -->
-  <div class="w-[355px] flex flex-col shadow-md bg-white h-[120px] rounded-xl p-3" >
+  <div class="w-[355px] flex flex-col shadow-md bg-white rounded-xl p-3" style="height:fit-content" >
     <!-- Top -->
     <div class="flex flex-row justify-between">
       <!-- Left: Title and Description -->
@@ -18,6 +18,11 @@ class="flex flex-1 flex-wrap justify-center gap-3 bg-[#fff0] w-10/12 md:w-11/12 
             {{ task.title | slice:":30" }}
           </h1>
         </a>
+        <div class="image">
+          {% if task.task_image %}
+            <img src="{{task.task_image.url}}" width=100% style="">     
+          {% endif %}
+        </div>
         <p class="text-gray-500 text-md">
           {{ task.description | slice:":35" }}
         </p>
